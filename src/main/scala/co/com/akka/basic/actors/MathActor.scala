@@ -2,8 +2,6 @@ package co.com.akka.basic.actors
 
 import akka.actor.{Actor, ActorLogging, Props}
 
-import scala.collection.mutable
-
 
 object MathActor {
 
@@ -24,12 +22,12 @@ class MathActor extends Actor with ActorLogging {
 
   import MathActor._
 
-  val state: mutable.Map[String, Int] = scala.collection.mutable.Map(
+  val state = scala.collection.mutable.Map(
     "SUM" -> 0,
     "MULTIPLY" -> 0
   )
 
-  def updateCounter(operation: MathOperation): state.type = operation match {
+  def updateCounter(operation: MathOperation) = operation match {
     case Sum(_) => {
       val newValue: Int = state("SUM") + 1
       state += ("SUM" -> newValue)

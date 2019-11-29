@@ -43,6 +43,16 @@ object Runner extends App {
    * - Implementar los metodos: drop, take, filter, dropWhile, takeWhile usando solo
    *    map y reduce.
    *
+   * Drop:
+   *    args: cantidad
+   *    return: List[T]
+   *    mec: control indices
+   * fold(List())(acc, actual => {
+   * * })
+   *
+   *
    */
+
+
 
 }
