@@ -64,3 +64,23 @@ def multiplyImplicit(num: Int)(implicit times: Int) = num * times
 
 implicit val times:Int = 3
 multiplyImplicit(4) // 12
+
+
+
+val tuple: (Int, String, String) = (1, "name", "lastName")
+
+
+// ADT - Sum Type
+// tipo superior -> pueden ser uno u otro
+// Functor  => Tipo que tenga el metodo map => Type[T] => T => B
+// Monad => FlatMap
+/**
+ * Try[T] => Failure | Success
+ * Option[T] => Some(T) | None
+ * Either[T] => Left | Right
+ */
+
+
+
+
+

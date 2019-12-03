@@ -17,12 +17,16 @@ import spray.json.DefaultJsonProtocol._
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
-object WebServer extends App {
+object WebServer extends App with DbConfig {
+  import DbConfig._
+
   implicit val system: ActorSystem = ActorSystem("actor-system-http")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
+
+  setupDb(db) // Ejecución de planos
 
   // domain objects
   final case class Item(name: String, id: Long)
