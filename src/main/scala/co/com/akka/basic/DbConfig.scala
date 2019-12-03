@@ -1,5 +1,6 @@
 package co.com.akka.basic
 
+import co.com.akka.basic.domain.User
 import slick.dbio.Effect
 import slick.jdbc
 import slick.jdbc.H2Profile
@@ -19,7 +20,6 @@ trait DbConfig {
 object DbConfig {
 
 
-  case class User(id: Int, name: String, lastName: String)
 
 
 
@@ -30,7 +30,7 @@ object DbConfig {
 
     def lastName = column[String]("LAST_NAME")
 
-    override def * = (id, name, lastName).mapTo[User]
+    override def * = (id, name, lastName) <> (User.tupled, User.unapply)
   }
 
   val usersTableQuery: TableQuery[UsersTable] = TableQuery[UsersTable]
