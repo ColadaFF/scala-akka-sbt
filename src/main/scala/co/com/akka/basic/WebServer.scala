@@ -6,6 +6,7 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
+import co.com.akka.basic.repositories.UsersRepository
 import spray.json.RootJsonFormat
 
 import scala.concurrent.Future
@@ -27,6 +28,8 @@ object WebServer extends App with DbConfig {
 
 
   setupDb(db) // Ejecución de planos
+
+  val usersRepository = new UsersRepository(db, usersTableQuery)
 
   // domain objects
   final case class Item(name: String, id: Long)

@@ -1,8 +1,11 @@
 package co.com.akka.basic
 
+import slick.dbio.Effect
+import slick.jdbc
 import slick.jdbc.H2Profile
 import slick.jdbc.H2Profile.api._
 import slick.lifted.ForeignKeyQuery
+import slick.sql.FixedSqlAction
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -17,6 +20,9 @@ object DbConfig {
 
 
   case class User(id: Int, name: String, lastName: String)
+
+
+
   class UsersTable(tag: Tag) extends Table[User](tag, "USERS") {
     def id = column[Int]("USER_ID", O.PrimaryKey)
 
@@ -28,6 +34,16 @@ object DbConfig {
   }
 
   val usersTableQuery: TableQuery[UsersTable] = TableQuery[UsersTable]
+
+  //val list: List[User] = Nil
+
+  //list.filter(_.name != "Pedro").map(_.id)
+  //            String  String          Int
+  //private val query: Query[Rep[Int], Int, Seq] = usersTableQuery.filterNot(_.name == "Pedro").map(_.id)
+
+  // => SELECT ID WHERE
+  //                        Rep[String]
+
 
   class AccountTable(tag: Tag) extends Table[(Int, Int, Int)](tag, "ACCOUNTS") {
     def id = column[Int]("ID", O.PrimaryKey)
@@ -41,6 +57,10 @@ object DbConfig {
   }
 
   val accountsTableQuery: TableQuery[AccountTable] = TableQuery[AccountTable]
+
+  private val result: FixedSqlAction[Option[Int], jdbc.H2Profile.api.NoStream, Effect.Read] = accountsTableQuery.map(_.balance).max.result
+
+  result.statements.foreach(println)
 
 
   def setupDb(db: H2Profile.backend.Database)(implicit ec: ExecutionContext) = {
