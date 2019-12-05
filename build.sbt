@@ -17,6 +17,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % slickVersion,
   "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
   "com.h2database" % "h2" % "1.4.200",
+  "org.typelevel" %% "cats-core" % "2.0.0",
+  "org.scalatest" %% "scalatest" % "3.1.0" % "test", // scalastic y plugin SuperSafe
 "ch.qos.logback" % "logback-classic" % "1.2.3"
 )
 

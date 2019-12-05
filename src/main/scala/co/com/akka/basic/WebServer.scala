@@ -1,15 +1,20 @@
 package co.com.akka.basic
 
-import akka.Done
+import java.time.LocalTime
+
+import akka.{Done, NotUsed}
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.sse.ServerSentEvent
 import akka.http.scaladsl.server.Directives._
+import akka.stream.scaladsl.Source
 import co.com.akka.basic.repositories.UsersRepository
 import spray.json.RootJsonFormat
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 // For json
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -58,11 +63,61 @@ object WebServer extends App with DbConfig {
   }
 
 
+  /**
+   * Homework
+   *
+   * Crear una api REST con:
+   *
+   * 1. CRUD de usuario a base de datos
+   * 2. Con prueba unitarias
+   * 3. Con pruebas de integración usando ScalaMock
+   * 4. Con validaciones usando Cats Validated
+   * 5. Extra: ¿Cómo usar el tipo Reader de Cats para las operaciones en base de datos?
+   * 6. Extra: Que todas las operaciones de base de datos pasen por un actor,
+   *  investigar patron ask de Akka
+   * 7. Crear un endpoint HTTP de Server Sent Events para reportar todos los eventos de CRUD
+   *
+   */
+
+
+  import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
+  import scala.concurrent.duration._
+  import java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
   val route =
     concat(
+
+      path("events") {
+        get {
+          complete {
+            Source
+              .tick(2.seconds, 2.seconds, NotUsed)
+              .map(_ => LocalTime.now())
+              .map(time => ServerSentEvent(ISO_LOCAL_TIME.format(time)))
+              .keepAlive(1.second, () => ServerSentEvent.heartbeat)
+          }
+        }
+      },
+      path("users") {
+        concat(
+          post {
+            complete("")
+          },
+          get {
+            concat(
+              path("one") {
+                complete("")
+              },
+              path("all") {
+                complete("")
+              }
+            )
+          }
+        )
+      },
       get {
         pathPrefix("item" / LongNumber) {id =>
           val maybeItem: Future[Option[Item]] = fetchItem(id)
+
 
           onSuccess(maybeItem) {
             case Some(value) => complete(value)
@@ -75,13 +130,15 @@ object WebServer extends App with DbConfig {
           entity(as[Order]) { order =>
             val saved:Future[Done] = saveOrder(order)
 
-            onComplete(saved) { _ =>
-              complete("order created")
+            onComplete(saved) {
+              case Success(value) => complete("")
+              case Failure(exception) => complete("Fallo")
             }
 
           }
         }
       }
+
 
 
       /*path("hello") {
